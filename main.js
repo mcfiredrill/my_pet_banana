@@ -29,34 +29,39 @@ var beingEatenBananas = [{imageFilename: '/img/eat1.png', eatenness: 1, ready: f
                          {imageFilename: '/img/eat3.png', eatenness: 3, ready: false},
                          {imageFilename: '/img/eat4.png', eatenness: 4, ready: false}
                         ];
+
 for (var i = 0; i < uneatenBananas.length; i += 1){
   var banana = uneatenBananas[i];
   banana.image = new Image();
   banana.image.src = banana.imageFilename;
-  banana.image.onload = function(){
-    banana.ready = true;
-  }
 }
 
-for (var i = 0; i < uneatenBananas.length; i += 1){
+for (var i = 0; i < beingEatenBananas.length; i += 1){
   var banana = beingEatenBananas[i];
   banana.image = new Image();
   banana.image.src = banana.imageFilename;
-  banana.image.onload = function(){
-    banana.ready = true;
-  }
 }
 
 var Banana = function(ripeness_level, x, y) {
   this.state = 'unopened';
-  this.ripeness = ripeness;
-  this.image = uneatenBananas[ripeness_level];
+  this.ripeness = ripeness_level;
+  this.image = uneatenBananas[ripeness_level].image;
+  this.beingEaten = false;
+  this.eatenProgress = 0;
+  this.x = x;
+  this.y = y;
+};
+
+var b = new Banana(2, 0, 0);
+
+var update = function() {
 };
 
 var render = function() {
   if(bgReady) {
     ctx.drawImage(bg, 0, 0);
   }
+  ctx.drawImage(b.image, 0, 0);
 };
 
 // main game loop
