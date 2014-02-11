@@ -1,7 +1,15 @@
+// Returns a random integer between min and max
+// // Using Math.round() will give you a non-uniform distribution!
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 var canvas = document.getElementById('banana-canvas');
 var ctx = canvas.getContext('2d');
+var cw = canvas.width;
+var ch = canvas.height;
 
 var lastTime = (new Date()).getTime();
 var currentTime = 0;
@@ -52,16 +60,33 @@ var Banana = function(ripeness_level, x, y) {
   this.y = y;
 };
 
-var b = new Banana(2, 0, 0);
+var bananas = [];
+for(var i = 0; i < 10; i += 1) {
+  var ripeness_level = getRandomInt(0,uneatenBananas.length-1);
+  console.log(ripeness_level);
+  var x = getRandomInt(0,cw);
+  var y = getRandomInt(0,ch);
+  bananas.push(new Banana(ripeness_level, x, y));
+}
+
+canvas.addEventListener('click', function(e) {
+  var mousePos = getMousePos(canvas, e);
+});
+
+var handleInput = function() {
+};
 
 var update = function() {
+  handleInput();
 };
 
 var render = function() {
   if(bgReady) {
     ctx.drawImage(bg, 0, 0);
   }
-  ctx.drawImage(b.image, 0, 0);
+  for(var i = 0; i < bananas.length; i += 1) {
+    ctx.drawImage(bananas[i].image, bananas[i].x, bananas[i].y);
+  }
 };
 
 // main game loop
