@@ -4,6 +4,37 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+
+function getBananaBoundingBox(banana) {
+  var coords = {};
+  coords.x1 = banana.x;
+  coords.x2 = banana.x+banana.image.width;
+  coords.y1 = banana.y;
+  coords.y2 = banana.y+banana.image.height;
+  return coords;
+}
+
+function bananaHit(mouse, bananaCoords) {
+  return mouse.x > bananaCoords.x1 && mouse.x < bananaCoords.x2 && mouse.y > bananaCoords.y1 && mouse.y < bananaCoords.y2;
+}
+
+function eatBanana(banana){
+  console.log(banana);
+  if(banana.state == 'unopened'){
+    banana.state = 'beingEaten';
+    banana.image = beingEatenBananas[banana.eatenProgress].image;
+  }else{
+  }
+}
+
+/* GLOBALZ */
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 var canvas = document.getElementById('banana-canvas');
@@ -14,6 +45,11 @@ var ch = canvas.height;
 var lastTime = (new Date()).getTime();
 var currentTime = 0;
 var delta = 0;
+
+var mouseClicked = false;
+var mousePos;
+
+/* */
 
 // bg
 var bg = new Image();
@@ -70,10 +106,25 @@ for(var i = 0; i < 10; i += 1) {
 }
 
 canvas.addEventListener('click', function(e) {
-  var mousePos = getMousePos(canvas, e);
+  mousePos = getMousePos(canvas, e);
+  mouseClicked = true;
 });
 
 var handleInput = function() {
+  if(mouseClicked){
+    console.log('mouse clicked dude');
+    mouseClicked = false;
+    console.log(mousePos.x);
+    console.log(mousePos.y);
+    for(var i = 0; i < bananas.length; i += 1) {
+      var coords = getBananaBoundingBox(bananas[i]);
+      console.log(coords);
+      if(bananaHit(mousePos, coords)){
+        console.log("banana hit for banana["+i+"]!");
+        eatBanana(bananas[i]);
+      }
+    }
+  }
 };
 
 var update = function() {
@@ -96,6 +147,8 @@ var gameLoop = function() {
   delta = (currentTime - lastTime) / 1000;
 
   render();
+
+  update();
 
   lastTime = currentTime;
 };
