@@ -30,7 +30,16 @@ function eatBanana(banana){
   if(banana.state == 'unopened'){
     banana.state = 'beingEaten';
     banana.image = beingEatenBananas[banana.eatenProgress].image;
-  }else{
+  }else if(banana.state == 'beingEaten'){
+    banana.eatenProgress += 1;
+    if(banana.eatenProgress >= beingEatenBananas.length){
+      // its eaten
+      banana.state == 'eaten';
+      banana.image = peel;
+    }else{
+      // keep eating it
+      banana.image = beingEatenBananas[banana.eatenProgress].image;
+    }
   }
 }
 
@@ -58,6 +67,9 @@ bg.src = "/img/bg.png";
 bg.onload = function(){
   bgReady = true;
 };
+
+var peel = new Image();
+peel.src = "/img/peel.png";
 
 // bananas
 var bananaStates = ['unopened', 'beingEaten', 'eaten'];
@@ -90,7 +102,6 @@ var Banana = function(ripeness_level, x, y) {
   this.state = 'unopened';
   this.ripeness = ripeness_level;
   this.image = uneatenBananas[ripeness_level].image;
-  this.beingEaten = false;
   this.eatenProgress = 0;
   this.x = x;
   this.y = y;
@@ -99,7 +110,6 @@ var Banana = function(ripeness_level, x, y) {
 var bananas = [];
 for(var i = 0; i < 10; i += 1) {
   var ripeness_level = getRandomInt(0,uneatenBananas.length-1);
-  console.log(ripeness_level);
   var x = getRandomInt(0,cw);
   var y = getRandomInt(0,ch);
   bananas.push(new Banana(ripeness_level, x, y));
@@ -112,13 +122,9 @@ canvas.addEventListener('click', function(e) {
 
 var handleInput = function() {
   if(mouseClicked){
-    console.log('mouse clicked dude');
     mouseClicked = false;
-    console.log(mousePos.x);
-    console.log(mousePos.y);
     for(var i = 0; i < bananas.length; i += 1) {
       var coords = getBananaBoundingBox(bananas[i]);
-      console.log(coords);
       if(bananaHit(mousePos, coords)){
         console.log("banana hit for banana["+i+"]!");
         eatBanana(bananas[i]);
